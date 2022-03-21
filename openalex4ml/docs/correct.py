@@ -1,5 +1,6 @@
-""" Build the subject hierarchy as a dict with each subject mapped to its
-ancestors. """
+""" Fix the hierarchy violations of the subject assignments by ensuring that each
+document is assigned the ancestors of all the subjects it is originally
+assigned. """
 
 
 import json
