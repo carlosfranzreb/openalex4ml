@@ -91,14 +91,3 @@ class SubjectRetriever:
   
   def dump_subjects(self, dump_file):
     json.dump(self.subjects, open(dump_file, 'w'))
-
-
-if __name__ == '__main__':
-  logging.basicConfig(
-    level=logging.INFO,
-    filename=f'logs/get_subjects_{int(time())}.log'
-  )
-  retriever = SubjectRetriever()
-  retriever.retrieve()
-  retriever.dump_subjects('data/openalex/new_subjects.json')
-  # ! sort:desc ist not a valid parameter
