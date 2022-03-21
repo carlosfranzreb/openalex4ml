@@ -10,6 +10,14 @@ We have tried different thresholds for how many assignments a subject needs to b
 
 The numbers of assigned documents stated above (25k, 10k, 5k, 1k and 100) is modified depending on the parameter _m_. All values smaller than _m_ are removed from the list, and _m_ is appended. To avoid uninformative Wikipedia texts such as _"Emotionalism may refer to:"_, we also discard subjects whose description says _"Wikimedia disambiguation page"_ or _"Wikimedia glossary list article"_. The description from a subject comes from the corresponding Wikidata link, through which we later extract the Wikipedia link.
 
+The class `SubjectRetriever` can be used as follows:
+
+```python
+retriever = SubjectRetriever()
+retriever.retrieve()
+retriever.dump_subjects('dump_file.json')
+```
+
 ## Retrieving documents
 
 TODO
