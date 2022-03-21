@@ -30,3 +30,7 @@ Once you have chosen a set of subjects, you can create a training dataset with t
 4. Number of documents per file (default is 3,000).
 5. Flag indicating if texts should be processed (default is True).
 6. Flag indicating if texts should be filtered (default is True).
+
+## Fixing hierarchy violations
+
+The subject assignments of the retrieved documents sometimes don't obey the hierarchy. This happens when a document is assigned a subject but not its ancestors in the subject hierarchy. We provide a function that fixes these violations: `openalex4ml.docs.correct.fix_violations`. Given the folder where the documents are stored, the file with the subjects and a dump folder, it iterates over the documents, adding the ancestors of the assigned subjects if they are not present in the list, as defined in the file with the subjects. It then stores the documents with the correct assignments in the given dump folder.
