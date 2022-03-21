@@ -20,7 +20,9 @@ retriever.dump_subjects('dump_file.json')
 
 ## Retrieving documents
 
-Once you have chosen a set of subjects, you can create a training dataset with the function `openalex4ml.docs.get.dump_docs`, which retrieves _n_ documents for each of the subjects. The title and abstract of each document are optionally processed and filtered, before being stored along with all its assigned subjects. Abstracts are offered by OpenAlex as inverted indices, so they are constructed before processing. The processing consists of lower-casing all words, and lemmatizing them with the `en_core_web_sm` tokenizer from SpaCy, which is assisted by the POS tags computed by Flair's `upos-fast` SequenceTagger. The filtering step removes words that are either in SpaCy's stopword list or have less than three letters.
+Once you have chosen a set of subjects, you can create a training dataset with the function `openalex4ml.docs.get.dump_docs`, which retrieves _n_ documents for each of the subjects. The title and abstract of each document are optionally processed and filtered, before being stored along with all its assigned subjects. We only consider journal articles.
+
+Abstracts are offered by OpenAlex as inverted indices, so they are constructed before processing. The processing consists of lower-casing all words, and lemmatizing them with the `en_core_web_sm` tokenizer from SpaCy, which is assisted by the POS tags computed by Flair's `upos-fast` SequenceTagger. The filtering step removes words that are either in SpaCy's stopword list or have less than three letters.
 
 `dump_docs` receives six arguments:
 
@@ -34,3 +36,9 @@ Once you have chosen a set of subjects, you can create a training dataset with t
 ## Fixing hierarchy violations
 
 The subject assignments of the retrieved documents sometimes don't obey the hierarchy. This happens when a document is assigned a subject but not its ancestors in the subject hierarchy. We provide a function that fixes these violations: `openalex4ml.docs.correct.fix_violations`. Given the folder where the documents are stored, the file with the subjects and a dump folder, it iterates over the documents, adding the ancestors of the assigned subjects if they are not present in the list, as defined in the file with the subjects. It then stores the documents with the correct assignments in the given dump folder.
+
+## Our dataset
+
+We have used this code to create a training dataset that comprises 2,157 subjects and 214,538 documents. The list of subjects includes up to 200 descendants of each of the 19 fields. We retrieved up to 100 documents per subject, which was possible for all subjects except for 17. Given that we avoid duplicates, many of these subjects were already present in the list of retrieved subjects for other documents. Only for two of these subjects we could not find any documents: _"Algorithm design"_ and _"Premise"_. This may be because we only consider journal articles, and discard documents of any other kind.
+
+In total, there are 1,890,080 subject assignments. 821,273 of these assignments were added to fix hierarchy violations. The field that has benefited the most from fixing the hierarchy violations is \textit{Engineering}, which went from being the field with the least assignments (2,565), to having over 60,000 assignments. All fields have more than 20,000 assignments after the corrections, whereas before there were several with less than 5,000 assignments.
