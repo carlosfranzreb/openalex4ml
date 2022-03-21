@@ -20,4 +20,13 @@ retriever.dump_subjects('dump_file.json')
 
 ## Retrieving documents
 
-TODO
+Once you have chosen a set of subjects, you can create a training dataset with the function `openalex4ml.docs.get.dump_docs`, which retrieves _n_ documents for each of the subjects. The title and abstract of each document are optionally processed and filtered, before being stored along with all its assigned subjects. Abstracts are offered by OpenAlex as inverted indices, so they are constructed before processing. The processing consists of lower-casing all words, and lemmatizing them with the `en_core_web_sm` tokenizer from SpaCy, which is assisted by the POS tags computed by Flair's `upos-fast` SequenceTagger. The filtering step removes words that are either in SpaCy's stopword list or have less than three letters.
+
+`dump_docs` receives six arguments:
+
+1. Name of the file where the subjects are stored.
+2. Folder where the documents should be stored.
+3. Number of documents to retrieve per subject (default is 100).
+4. Number of documents per file (default is 3,000).
+5. Flag indicating if texts should be processed (default is True).
+6. Flag indicating if texts should be filtered (default is True).
