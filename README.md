@@ -24,14 +24,6 @@ Once you have chosen a set of subjects, you can create a training dataset with t
 
 Abstracts are offered by OpenAlex as inverted indices, so they are constructed before processing. The processing consists of lower-casing all words, and lemmatizing them with the `en_core_web_sm` tokenizer from SpaCy, which is assisted by the POS tags computed by Flair's `upos-fast` SequenceTagger. The filtering step removes words that are either in SpaCy's stopword list or have less than three letters.
 
-`dump_docs` receives six arguments:
-
-1. Name of the file where the subjects are stored.
-2. Folder where the documents should be stored.
-3. Number of documents to retrieve per subject (default is 100).
-4. Number of documents per file (default is 3,000).
-5. Flag indicating if texts should be processed (default is True).
-6. Flag indicating if texts should be filtered (default is True).
 
 ## Fixing hierarchy violations
 
@@ -42,3 +34,14 @@ The subject assignments of the retrieved documents sometimes don't obey the hier
 We have used this code to create a training dataset that comprises 2,157 subjects and 214,538 documents. The list of subjects includes up to 200 descendants of each of the 19 fields. We retrieved up to 100 documents per subject, which was possible for all subjects except for 17. Given that we avoid duplicates, many of these subjects were already present in the list of retrieved subjects for other documents. Only for two of these subjects we could not find any documents: _"Algorithm design"_ and _"Premise"_. This may be because we only consider journal articles, and discard documents of any other kind.
 
 In total, there are 1,890,080 subject assignments. 821,273 of these assignments were added to fix hierarchy violations. The field that has benefited the most from fixing the hierarchy violations is _"Engineering"_, which went from being the field with the least assignments (2,565), to having over 60,000 assignments. All fields have more than 20,000 assignments after the corrections, whereas before there were several with less than 5,000 assignments. You can find the resulting subjects and documents in the `data.zip` file.
+
+## Vectorizing the data
+
+We provide a function (`openalex4ml/docs/vectorize/dump_vecs`) to vectorize the data with pre-trained [fasttext vectors](https://fasttext.cc/docs/en/english-vectors.html). We have used the file called _"wiki-news-300d-1M-subword.vec.zip"_, but you can use any other file in this page. Files from another source can also be used, if they provide the vectors in the same format as fasttext. The format is shown in the fasttext website. Remember to unzip the file before feeding it to the vectorizing function.
+
+## Splitting the data
+
+Finally, we also provide a function to split the data into training and test sets: `openalex4ml/docs/split/split_data`. This function splits the data given the folder where the vector files are stored, a folder where to dump the split data, and a percentage of documents that should be used for testing. The documents are stored by the subject used to retrieve them, so the splitting occurs evenly across subjects. This means that we split the documents retrieved for each subject independently.
+
+The training files are named with a number, whereas the test file is named `test.json`. Each file contains a list of documents, where each document is represented by a dictionary with the keys `data` and `subjects`, which map to the vector representations of the texts and the assigned subjects, respectively.
+
