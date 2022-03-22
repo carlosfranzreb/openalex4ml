@@ -41,7 +41,12 @@ We provide a function (`openalex4ml/docs/vectorize/dump_vecs`) to vectorize the 
 
 ## Splitting the data
 
-Finally, we also provide a function to split the data into training and test sets: `openalex4ml/docs/split/split_data`. This function splits the data given the folder where the vector files are stored, a folder where to dump the split data, and a percentage of documents that should be used for testing. The documents are stored by the subject used to retrieve them, so the splitting occurs evenly across subjects. This means that we split the documents retrieved for each subject independently.
+We also provide a function to split the data into training and test sets: `openalex4ml/docs/split/split_data`. This function splits the data given the folder where the vector files are stored, a folder where to dump the split data, and a percentage of documents that should be used for testing. The documents are stored by the subject used to retrieve them, so the splitting occurs evenly across subjects. This means that we split the documents retrieved for each subject independently.
 
 The training files are named with a number, whereas the test file is named `test.json`. Each file contains a list of documents, where each document is represented by a dictionary with the keys `data` and `subjects`, which map to the vector representations of the texts and the assigned subjects, respectively.
 
+## Loading the data
+
+The dataset that results from performing all the above steps can be used to train a PyTorch model with the class `openalex4ml/docs/load/Dataset`. It iterates over the files and returns tuples of the vector representations of documents and its assigned subjects. The subjects are an array with ones for assigned subjects and zeros elsewhere. Both arrays are returned as tensors. The data contained in each file can be optionally shuffled.
+
+This class is a child of PyTorch's `IterableDataset`, and can therefore be fed to the DataLoader class, as shown [here](https://pytorch.org/docs/stable/data.html).
