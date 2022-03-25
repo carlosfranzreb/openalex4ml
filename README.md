@@ -50,3 +50,11 @@ The training files are named with a number, whereas the test file is named `test
 The dataset that results from performing all the above steps can be used to train a PyTorch model with the class `openalex4ml/docs/load/Dataset`. It iterates over the files and returns tuples of the vector representations of documents and its assigned subjects. The subjects are an array with ones for assigned subjects and zeros elsewhere. Both arrays are returned as tensors. The data contained in each file can be optionally shuffled.
 
 This class is a child of PyTorch's `IterableDataset`, and can therefore be fed to the DataLoader class, as shown [here](https://pytorch.org/docs/stable/data.html).
+
+## Analysing the data
+
+The file `openalex4ml/docs/count.py` contains three functions that can be used to analyse the extracted documents. They compute the following statistics:
+
+1. Number of documents extracted per subject.
+2. Number of assignments of each subject.
+3. Number of subjects assigned to each document.
