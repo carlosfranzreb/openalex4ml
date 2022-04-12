@@ -18,6 +18,10 @@ retriever.retrieve()
 retriever.dump_subjects('dump_file.json')
 ```
 
+## Subjects as SKOS
+
+Some applications may require the OpenAlex subjects as a SKOS. We provide a function that transforms the JSON file with the subjects to a SKOS in Turtle format in `openalex4ml.subjects.skos`.
+
 ## Retrieving documents
 
 Once you have chosen a set of subjects, you can create a training dataset with the function `openalex4ml.docs.get.dump_docs`, which retrieves _n_ documents for each of the subjects. The title and abstract of each document are optionally processed and filtered, before being stored along with all its assigned subjects. We only consider journal articles.
@@ -29,32 +33,32 @@ Abstracts are offered by OpenAlex as inverted indices, so they are constructed b
 
 The subject assignments of the retrieved documents sometimes don't obey the hierarchy. This happens when a document is assigned a subject but not its ancestors in the subject hierarchy. We provide a function that fixes these violations: `openalex4ml.docs.correct.fix_violations`. Given the folder where the documents are stored, the file with the subjects and a dump folder, it iterates over the documents, adding the ancestors of the assigned subjects if they are not present in the list, as defined in the file with the subjects. It then stores the documents with the correct assignments in the given dump folder.
 
-## Our dataset
-
-We have used this code to create a training dataset that comprises 2,157 subjects and 214,538 documents. The list of subjects includes up to 200 descendants of each of the 19 fields. We retrieved up to 100 documents per subject, which was possible for all subjects except for 17. Given that we avoid duplicates, many of these subjects were already present in the list of retrieved subjects for other documents. Only for two of these subjects we could not find any documents: _"Algorithm design"_ and _"Premise"_. This may be because we only consider journal articles, and discard documents of any other kind.
-
-In total, there are 1,890,080 subject assignments. 821,273 of these assignments were added to fix hierarchy violations. The field that has benefited the most from fixing the hierarchy violations is _"Engineering"_, which went from being the field with the least assignments (2,565), to having over 60,000 assignments. All fields have more than 20,000 assignments after the corrections, whereas before there were several with less than 5,000 assignments. You can find the resulting subjects and documents in the `data.zip` file.
-
 ## Vectorizing the data
 
-We provide a function (`openalex4ml/docs/vectorize/dump_vecs`) to vectorize the data with pre-trained [fasttext vectors](https://fasttext.cc/docs/en/english-vectors.html). We have used the file called _"wiki-news-300d-1M-subword.vec.zip"_, but you can use any other file in this page. Files from another source can also be used, if they provide the vectors in the same format as fasttext. The format is shown in the fasttext website. Remember to unzip the file before feeding it to the vectorizing function.
+We provide a function (`openalex4ml.docs.vectorize.dump_vecs`) to vectorize the data with pre-trained [fasttext vectors](https://fasttext.cc/docs/en/english-vectors.html). We have used the file called _"wiki-news-300d-1M-subword.vec.zip"_, but you can use any other file in this page. Files from another source can also be used, if they provide the vectors in the same format as fasttext. The format is shown in the fasttext website. Remember to unzip the file before feeding it to the vectorizing function.
 
 ## Splitting the data
 
-We also provide a function to split the data into training and test sets: `openalex4ml/docs/split/split_data`. This function splits the data given the folder where the vector files are stored, a folder where to dump the split data, and a percentage of documents that should be used for testing. The documents are stored by the subject used to retrieve them, so the splitting occurs evenly across subjects. This means that we split the documents retrieved for each subject independently.
+We also provide a function to split the data into training and test sets: `openalex4ml.docs.split.split_data`. This function splits the data given the folder where the vector files are stored, a folder where to dump the split data, and a percentage of documents that should be used for testing. The documents are stored by the subject used to retrieve them, so the splitting occurs evenly across subjects. This means that we split the documents retrieved for each subject independently.
 
 The training files are named with a number, whereas the test file is named `test.json`. Each file contains a list of documents, where each document is represented by a dictionary with the keys `data` and `subjects`, which map to the vector representations of the texts and the assigned subjects, respectively.
 
 ## Loading the data
 
-The dataset that results from performing all the above steps can be used to train a PyTorch model with the class `openalex4ml/docs/load/Dataset`. It iterates over the files and returns tuples of the vector representations of documents and its assigned subjects. The subjects are an array with ones for assigned subjects and zeros elsewhere. Both arrays are returned as tensors. The data contained in each file can be optionally shuffled.
+The dataset that results from performing all the above steps can be used to train a PyTorch model with the class `openalex4ml.docs.load.Dataset`. It iterates over the files and returns tuples of the vector representations of documents and its assigned subjects. The subjects are an array with ones for assigned subjects and zeros elsewhere. Both arrays are returned as tensors. The data contained in each file can be optionally shuffled.
 
 This class is a child of PyTorch's `IterableDataset`, and can therefore be fed to the DataLoader class, as shown [here](https://pytorch.org/docs/stable/data.html).
 
 ## Analysing the data
 
-The file `openalex4ml/docs/count.py` contains three functions that can be used to analyse the extracted documents. They compute the following statistics:
+The file `openalex4ml.docs.count` contains three functions that can be used to analyse the extracted documents. They compute the following statistics:
 
 1. Number of documents extracted per subject.
 2. Number of assignments of each subject.
 3. Number of subjects assigned to each document.
+
+## Our dataset
+
+We have used this code to create a training dataset that comprises 2,157 subjects and 214,538 documents. The list of subjects includes up to 200 descendants of each of the 19 fields. We retrieved up to 100 documents per subject, which was possible for all subjects except for 17. Given that we avoid duplicates, many of these subjects were already present in the list of retrieved subjects for other documents. Only for two of these subjects we could not find any documents: _"Algorithm design"_ and _"Premise"_. This may be because we only consider journal articles, and discard documents of any other kind.
+
+In total, there are 1,890,080 subject assignments. 821,273 of these assignments were added to fix hierarchy violations. The field that has benefited the most from fixing the hierarchy violations is _"Engineering"_, which went from being the field with the least assignments (2,565), to having over 60,000 assignments. All fields have more than 20,000 assignments after the corrections, whereas before there were several with less than 5,000 assignments. You can find the resulting subjects and documents in the `data.zip` file.
